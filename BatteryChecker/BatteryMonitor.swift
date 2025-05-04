@@ -20,6 +20,9 @@ class BatteryMonitor: ObservableObject {
     var chargeNowThreshold: Int {
         UserDefaults.standard.integer(forKey: "chargeNowThreshold") == 0 ? 30 : UserDefaults.standard.integer(forKey: "chargeNowThreshold")
     }
+    
+    var chargeFlag: Bool = false
+    var prepareFlag: Bool = false
 
     init() {
         startMonitoring()
@@ -47,15 +50,26 @@ class BatteryMonitor: ObservableObject {
         batteryLevel = percentage
         
         if percentage <= chargeNowThreshold {
-            sendNotification(
-                title: "Charger Needed",
-                body: "Your Mac is low on battery.\nPlease connect the power adapter. Battery is at \(percentage)%."
-            )
-        } else if percentage <= prepareThreshold {
-            sendNotification(
-                title: "Prepare to Charge",
-                body: "Your Mac will need charging soon.\nStay near a power source. Battery is at \(percentage)%."
-            )
+            if chargeFlag == false {
+                sendNotification(
+                    title: "Charger Needed",
+                    body: "Your Mac is low on battery.\nPlease connect the power adapter. Battery is at \(percentage)%."
+                )
+            }
+            chargeFlag = true
+        }
+        else if percentage > chargeNowThreshold && percentage <= prepareThreshold {
+            if prepareFlag == false {
+                sendNotification(
+                    title: "Prepare to Charge",
+                    body: "Your Mac will need charging soon.\nStay near a power source. Battery is at \(percentage)%."
+                )
+            }
+            prepareFlag = true
+        }
+        else {
+            chargeFlag = false
+            prepareFlag = true
         }
     }
     

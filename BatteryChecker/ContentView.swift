@@ -34,6 +34,10 @@ struct ContentView: View {
             Text("Settings saved automatically")
                 .font(.footnote)
                 .foregroundColor(.gray)
+            
+            Text("If you don't see notifications, check if they are enabled.")
+                .font(.footnote)
+                .foregroundColor(.gray)
 
             Button("Quit") {
                 NSApplication.shared.terminate(nil)
