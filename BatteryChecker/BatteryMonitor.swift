@@ -50,21 +50,21 @@ class BatteryMonitor: ObservableObject {
         batteryLevel = percentage
         
         if percentage <= chargeNowThreshold {
-            if chargeFlag == false {
-                sendNotification(
-                    title: "Charger Needed",
-                    body: "Your Mac is low on battery.\nPlease connect the power adapter. Battery is at \(percentage)%."
-                )
-            }
+            if chargeFlag { return }
+            
+            sendNotification(
+                title: "Charger Needed",
+                body: "Your Mac is low on battery.\nPlease connect the power adapter. Battery is at \(percentage)%."
+            )
             chargeFlag = true
         }
         else if percentage > chargeNowThreshold && percentage <= prepareThreshold {
-            if prepareFlag == false {
-                sendNotification(
-                    title: "Prepare to Charge",
-                    body: "Your Mac will need charging soon.\nStay near a power source. Battery is at \(percentage)%."
-                )
-            }
+            if prepareFlag { return }
+
+            sendNotification(
+                title: "Prepare to Charge",
+                body: "Your Mac will need charging soon.\nStay near a power source. Battery is at \(percentage)%."
+            )
             prepareFlag = true
         }
         else {
@@ -77,6 +77,7 @@ class BatteryMonitor: ObservableObject {
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
+        content.interruptionLevel = .critical
         
         let request = UNNotificationRequest(identifier: UUID().uuidString,
                                             content: content,
@@ -85,6 +86,6 @@ class BatteryMonitor: ObservableObject {
     }
     
     private func requestNotificationPermission() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
     }
 }
