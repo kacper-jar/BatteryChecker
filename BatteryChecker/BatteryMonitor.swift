@@ -69,7 +69,7 @@ class BatteryMonitor: ObservableObject {
         }
         else {
             chargeFlag = false
-            prepareFlag = true
+            prepareFlag = false
         }
     }
     
@@ -78,6 +78,7 @@ class BatteryMonitor: ObservableObject {
         content.title = title
         content.body = body
         content.interruptionLevel = .critical
+        content.sound = .defaultCritical
         
         let request = UNNotificationRequest(identifier: UUID().uuidString,
                                             content: content,
